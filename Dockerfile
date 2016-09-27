@@ -117,7 +117,7 @@ RUN mkdir -p /var/www/sites/default/files && \
 	chown -R www-data:www-data /var/www/
 RUN /etc/init.d/mysql start && \
 	cd /var/www && \
-	drush si -y minimal --db-url=mysql://root:@localhost/drupal --account-pass=admin && \
+	drush si -y minimal --db-url=mysql://root:@localhost/drupal --account-name=suser --account-pass=admin && \
 	drush dl admin_menu devel && \
 	drush en -y admin_menu simpletest devel && \
 	drush vset "admin_menu_tweak_modules" 1 && \
