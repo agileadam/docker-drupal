@@ -80,13 +80,18 @@ The containers you create using this image will have Drupal installed and ready-
 
 *If you want to just use the environment with your own existing code/db*:
 
-* Map the volume to the Drupal site directory on your host machine
-* Change settings.php as needed to use the "root" mysql credentials:
-* Import your database
+Map the volume to the Drupal site directory on your host machine
 
 	docker run -d --name mycontainer -p 8080:80 -v /Users/adam/phpstorm/mysite:/var/www -t agileadam/drupal-7.50
+
+Change `settings.php` as needed to use the `root` mysql credentials:
+
 	vim /Users/adam/phpstorm/mysite/sites/default/settings.php
-	...DB IMPORT TBD...
+
+Import your database
+
+	TBD
+
 
 ### Writing code locally
 
