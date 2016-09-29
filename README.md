@@ -82,7 +82,7 @@ The containers you create using this image will have Drupal installed and ready-
 
 Map the volume to the Drupal site directory on your host machine
 
-	docker run -d --name mycontainer -p 8080:80 -v /Users/adam/phpstorm/mysite:/var/www -t agileadam/drupal-7.50
+	docker run -d --name mycontainer -p 8080:80 -p 8022:22 -v /Users/adam/phpstorm/mysite:/var/www -t agileadam/drupal-7.50
 
 Change `settings.php` as needed to use the `root` mysql credentials:
 
@@ -97,15 +97,19 @@ Import your database
 
 Here's an example running the container, forwarding port `8080` like before, but also mounting Drupal's `sites/all/modules/custom/` folder to my local `modules/` folder. I can then start writing code on my local machine, directly in this folder, and it will be available inside the container:
 
-	docker run -d --name mycontainer -p 8080:80 -v `pwd`/modules:/var/www/sites/all/modules/custom -t agileadam/drupal-7.50
+	docker run -d --name mycontainer -p 8080:80 -p 8022:22 -v `pwd`/modules:/var/www/sites/all/modules/custom -t agileadam/drupal-7.50
 
 ### Using Drush
 
-Using Drush aliases, you can directly execute Drush commands locally and have them be executed inside the container. Create a new aliases file in your home directory and add the following:
+Using Drush aliases, you can directly execute Drush commands locally and have them be executed inside the container.
+
+*This docker image uses Drush 7. You will only be able to talk to the docker-hosted site using Drush 7.*
+
+Create a new aliases file in your home directory and add the following:
 
 	# ~/.drush/docker.aliases.drushrc.php
 	<?php
-	$aliases['agileadam_drupal'] = array(
+	$aliases['mycontainer'] = array(
 	  'root' => '/var/www',
 	  'remote-user' => 'root',
 	  'remote-host' => 'localhost',
@@ -120,9 +124,9 @@ Next, if you do not wish to type the root password everytime you run a Drush com
 
 Once you're logged in, add the contents of your `id_rsa.pub` file to `/root/.ssh/authorized_keys`. Exit.
 
-You should now be able to call:
+You should now be able to call `drush sa` to view available aliases, then you can use the alias like this:
 
-	drush @docker.agileadam_drupal cc all
+	drush @docker.mycontainer cc all
 
 This will clear the cache of your Drupal site. All other commands will function as well.
 
