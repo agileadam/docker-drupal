@@ -130,6 +130,10 @@ You should now be able to call `drush sa` to view available aliases, then you ca
 
 This will clear the cache of your Drupal site. All other commands will function as well.
 
+NOTE: `drush sql-sync` will not work if both systems are "remote". You can try putting the "source" alias on the docker container by ssh'ing into it and putting it there, but YMMV. A simple solution (though probably not idea for large databases) is to pipe the sql-dump from the source into the destination like this (source on left, destination on right):
+
+	drush @somesource sql-dump | drush @docker.mycontainer sql-cli
+
 ### Using Drupal Console
 
 Similarly to Drush, Drupal Console can also be run locally, and execute commands remotely. Create a new file called `~/.console/sites/docker.yml` and add the following contents:
