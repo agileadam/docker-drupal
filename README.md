@@ -96,7 +96,11 @@ Import your database
 
 ### Writing code locally
 
-Here's an example running the container, forwarding port `8080` like before, but also mounting Drupal's `sites/all/modules/custom/` folder to my local `modules/` folder. I can then start writing code on my local machine, directly in this folder, and it will be available inside the container:
+If you map the entire Drupal site as a volume (shown above and on the next line) you will already be able to write code locally.
+
+	docker run -d --name mycontainer -p 8080:80 -p 8022:22 -v /Users/adam/phpstorm/mysite:/var/www -t agileadam/drupal-7.50
+
+Here's another example. This time we're running the container, forwarding port `8080` like before, but also mounting Drupal's `sites/all/modules/custom/` folder to the local `modules/` folder. You can then start writing code on your local machine, directly in this folder, and it will be available inside the container:
 
 	docker run -d --name mycontainer -p 8080:80 -p 8022:22 -v `pwd`/modules:/var/www/sites/all/modules/custom -t agileadam/drupal-7.50
 
@@ -169,8 +173,7 @@ If you want to run tests, you may need to take some additional steps. Drupal's S
 	# If you forwarded to another port than 8022, change accordingly.
 	# Password is "root".
 	ssh root@localhost -p 8022
-	# Change the port number accordingly. This example is if you forward
-	# to port 8081.
+	# Change the port number accordingly. This example is if you forward to port 8081.
 	echo "Listen 8081" >> /etc/apache2/ports.conf
 	/etc/init.d/apache2 restart
 
@@ -193,4 +196,3 @@ Example:
 	docker run -it --rm -e BLACKFIREIO_SERVER_ID="[your id here]" -e BLACKFIREIO_SERVER_TOKEN="[your token here]" -p 8022:22 -p 8080:80 agileadam/drupal-7.50
 
 You can now start profiling your application.
-
