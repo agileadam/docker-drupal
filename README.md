@@ -13,7 +13,8 @@ This image contains:
 * Apache 2.4
 * MySQL 5.5
 * PHP 5.6
-* Drush 7 (for `7` and `7.*` tags)
+* Drush 7
+* Drush 8
 * The latest release of Drupal Console (for `8` or `8.*.*` tags)
 * Drupal 7 or 8 (depending on tag)
 * Composer
@@ -103,17 +104,26 @@ Here's an example running the container, forwarding port `8080` like before, but
 
 Using Drush aliases, you can directly execute Drush commands locally and have them be executed inside the container.
 
-*This docker image uses Drush 7. You will only be able to talk to the docker-hosted site using Drush 7.*
+*This docker image uses Drush 7 by default, but drush7 and drush8 binaries both exist on the image so you can use 7 or 8 to connect.*
 
 Create a new aliases file in your home directory and add the following:
 
 	# ~/.drush/docker.aliases.drushrc.php
+
 	<?php
+	if (!isset($drush_major_version)) {
+		$drush_version_components = explode('.', DRUSH_VERSION);
+		$drush_major_version = $drush_version_components[0];
+	}
+
 	$aliases['mycontainer'] = array(
 	  'root' => '/var/www',
 	  'remote-user' => 'root',
 	  'remote-host' => 'localhost',
-	  'ssh-options' => '-p 8022', // Or any other port you specify when running the container
+	  'ssh-options' => '-p 8022', // the port you specified when running the container
+	  'path-aliases' => array(
+	    '%drush-script' => 'drush' . $drush_major_version,
+	  )
 	);
 
 Next, if you do not wish to type the root password everytime you run a Drush command, copy the content of your local SSH public key (usually `~/.ssh/id_rsa.pub`; read [here](https://help.github.com/articles/generating-ssh-keys/) on how to generate one if you don't have it). SSH into the running container:

@@ -30,11 +30,32 @@ RUN apt-get clean
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
+# Install Drush 7 and Drush 8 so you can use drush 7 OR 8 locally
+#
+# <?php
+# if (!isset($drush_major_version)) {
+#   $drush_version_components = explode('.', DRUSH_VERSION);
+#   $drush_major_version = $drush_version_components[0];
+# }
+#
+# $aliases['dev'] = array(
+#   ...
+#   'path-aliases' => array(
+#     '%drush-script' => 'drush' . $drush_major_version,
+#   )
+# );
+
 # Install Drush 7.
 RUN composer global require drush/drush:7.*
 RUN composer global update
 # Unfortunately, adding the composer vendor dir to the PATH doesn't seem to work. So:
 RUN ln -s /root/.composer/vendor/bin/drush /usr/local/bin/drush
+RUN ln -s /root/.composer/vendor/bin/drush /usr/local/bin/drush7
+
+# Install Drush 8 (can't use composer to install both versions)
+RUN php -r "readfile('https://github.com/drush-ops/drush/releases/download/8.1.5/drush.phar');" > drush8
+RUN chmod +x drush8
+RUN mv drush8 /usr/local/bin/
 
 # Setup PHP.
 RUN sed -i 's/display_errors = Off/display_errors = On/' /etc/php5/apache2/php.ini
