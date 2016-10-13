@@ -3,7 +3,7 @@ MAINTAINER Wouter Admiraal <wad@wadmiraal.net>
 ENV DEBIAN_FRONTEND noninteractive
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-# Install packages.
+# Install packages
 RUN apt-get update
 RUN apt-get install -y \
 	vim \
@@ -26,7 +26,7 @@ RUN apt-get install -y \
 	supervisor
 RUN apt-get clean
 
-# Install Composer.
+# Install Composer
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
@@ -45,7 +45,7 @@ RUN mv composer.phar /usr/local/bin/composer
 #   )
 # );
 
-# Install Drush 7.
+# Install Drush 7
 RUN composer global require drush/drush:7.*
 RUN composer global update
 # Unfortunately, adding the composer vendor dir to the PATH doesn't seem to work. So:
@@ -57,11 +57,11 @@ RUN php -r "readfile('https://github.com/drush-ops/drush/releases/download/8.1.5
 RUN chmod +x drush8
 RUN mv drush8 /usr/local/bin/
 
-# Setup PHP.
+# Setup PHP
 RUN sed -i 's/display_errors = Off/display_errors = On/' /etc/php5/apache2/php.ini
 RUN sed -i 's/display_errors = Off/display_errors = On/' /etc/php5/cli/php.ini
 
-# Setup Blackfire.
+# Setup Blackfire
 # Get the sources and install the Debian packages.
 # We create our own start script. If the environment variables are set, we
 # simply start Blackfire in the foreground. If not, we create a dummy daemon
@@ -83,7 +83,7 @@ fi\n\
 RUN chmod +x /usr/local/bin/launch-blackfire
 RUN mkdir -p /var/run/blackfire
 
-# Setup Apache.
+# Setup Apache
 # In order to run our Simpletest tests, we need to make Apache
 # listen on the same port as the one we forwarded. Because we use
 # 8080 by default, we set it up for that port.
@@ -103,28 +103,28 @@ RUN echo -e "\n# Include PHPMyAdmin configuration\nInclude /etc/phpmyadmin/apach
 RUN sed -i -e "s/\/\/ \$cfg\['Servers'\]\[\$i\]\['AllowNoPassword'\]/\$cfg\['Servers'\]\[\$i\]\['AllowNoPassword'\]/g" /etc/phpmyadmin/config.inc.php
 RUN sed -i -e "s/\$cfg\['Servers'\]\[\$i\]\['\(table_uiprefs\|history\)'\].*/\$cfg\['Servers'\]\[\$i\]\['\1'\] = false;/g" /etc/phpmyadmin/config.inc.php
 
-# Setup MySQL, bind on all addresses.
+# Setup MySQL, bind on all addresses
 RUN sed -i -e 's/^bind-address\s*=\s*127.0.0.1/#bind-address = 127.0.0.1/' /etc/mysql/my.cnf
 
-# Setup SSH.
+# Setup SSH
 RUN echo 'root:root' | chpasswd
 RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN mkdir /var/run/sshd && chmod 0755 /var/run/sshd
 RUN mkdir -p /root/.ssh/ && touch /root/.ssh/authorized_keys
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 
-# Setup Supervisor.
+# Setup Supervisor
 RUN echo -e '[program:apache2]\ncommand=/bin/bash -c "source /etc/apache2/envvars && exec /usr/sbin/apache2 -DFOREGROUND"\nautorestart=true\n\n' >> /etc/supervisor/supervisord.conf
 RUN echo -e '[program:mysql]\ncommand=/usr/bin/pidproxy /var/run/mysqld/mysqld.pid /usr/sbin/mysqld\nautorestart=true\n\n' >> /etc/supervisor/supervisord.conf
 RUN echo -e '[program:sshd]\ncommand=/usr/sbin/sshd -D\n\n' >> /etc/supervisor/supervisord.conf
 RUN echo -e '[program:blackfire]\ncommand=/usr/local/bin/launch-blackfire\n\n' >> /etc/supervisor/supervisord.conf
 RUN echo -e '[program:cron]\ncommand=cron -f\nautorestart=false \n\n' >> /etc/supervisor/supervisord.conf
 
-# Setup XDebug.
+# Setup XDebug
 RUN echo "xdebug.max_nesting_level = 300" >> /etc/php5/apache2/conf.d/20-xdebug.ini
 RUN echo "xdebug.max_nesting_level = 300" >> /etc/php5/cli/conf.d/20-xdebug.ini
 
-# Install Drupal.
+# Install Drupal
 RUN rm -rf /var/www
 RUN cd /var && \
 	drush dl drupal-7.51 && \
