@@ -18,7 +18,6 @@ This image contains:
 * Drupal 7
 * Composer
 * PHPMyAdmin
-* Blackfire
 
 When launching, the container will contain a fully-installed, ready to use Drupal site.
 
@@ -33,13 +32,6 @@ When launching, the container will contain a fully-installed, ready to use Drupa
 * 80 and 443 (Apache)
 * 22 (SSH)
 * 3306 (MySQL)
-
-### Environment variables
-
-If you wish to enable [Blackfire](https://blackfire.io) for profiling, set the following environment variables:
-
-* `BLACKFIREIO_SERVER_ID`: Your Blackfire server ID
-* `BLACKFIREIO_SERVER_TOKEN`: Your Blackfire server token
 
 Tutorial
 --------
@@ -167,13 +159,3 @@ If you want to run tests from HTTPS, though, you will need to edit the VHost fil
 ### MySQL and PHPMyAdmin
 
 PHPMyAdmin is available at `/phpmyadmin`. The MySQL port `3306` is exposed. The root account for MySQL is `root` (no password).
-
-### Blackfire
-
-[Blackfire](https://blackfire.io) is a free PHP profiling tool. It offers very detailed and comprehensive insight into your code. To use Blackfire, you must first register on the site. Once registered, you will get a *server ID* and a *server token*. You pass these to the container, and it will fire up Blackfire automatically.
-
-Example:
-
-	docker run -it --rm -e BLACKFIREIO_SERVER_ID="[your id here]" -e BLACKFIREIO_SERVER_TOKEN="[your token here]" -p 8022:22 -p 8080:80 agileadam/drupal-7.54
-
-You can now start profiling your application.
